@@ -11,7 +11,7 @@ $token = '6442038046:AAGfKm3q-YaNF38ps1EwMUN0QOeKbg7DX4M'; // setup access token
 $bot = new Neili($token);
 
 // send photo (cuustom method)
-$chatId = '1826312667';
+$chatId = '18263126678';
 $content = $bot->sendPhoto([
     'chat_id' => $chatId,
     'photo' => new CURLFile('test.jpg')
