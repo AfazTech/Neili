@@ -7,7 +7,7 @@ include('../src/Neili.php');
 use TelegramBot\Neili;
 
 // create Neili object
-$token = '6442038046:AAGfKm3q-YaNF38ps1EwMUN0QOeKbg7DX4M'; // setup access token
+$token = 'TOKEN_BOT'; // setup access token
 $bot = new Neili($token);
 
 // send photo (cuustom method)

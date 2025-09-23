@@ -51,7 +51,7 @@ use EasyLog\Logger;
  * @method array getMe()
  * @method static string keyboard(array $buttons, int $row = 2, bool $resize = true, bool $oneTime = false) Create a reply keyboard (normal keyboard) JSON
  * @method static string inlineKeyboard(array $keyboard, int $row = 2) Create an inline keyboard JSON
- * coming soon 
+ * coming soon 01
  */
 
 class Neili

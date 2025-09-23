@@ -9,7 +9,7 @@ use TelegramBot\Neili;
 
 
 // create Neili object
-$bot = new Neili('6442038046:AAGfKm3q-YaNF38ps1EwMUN0QOeKbg7DX4M');
+$bot = new Neili('TOKEN_BOT');
 
 
 // set custom proxy server or load balancer
@@ -23,13 +23,13 @@ $bot->logFile = 'neili.log';
 
 
 
- // enable print log
+// enable print log
 $bot->printLog = true;
 
 
 // send message
 $chatId = '1826312667';
-$message = 'This message was sent by Neili Library';
+$message = 'This message was sent by Neili Library!';
 $content = $bot->sendMessage($message, $message);
 
 /// print response
