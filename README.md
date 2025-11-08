@@ -29,6 +29,7 @@ Neili is optimized for both constrained hosting environments and long-running wo
 * [Settings](#settings)
 * [Keyboard Builder](#keyboard-builder)
 * [Client Methods Reference](#client-methods-reference)
+* [TODO](#TODO)
 * [License](#license)
 
 ---
@@ -299,6 +300,13 @@ print_r($result);
 ```
 
 **Note:** Every `Client` method returns a `Future`, which means all network requests are **non-blocking** by default, letting you run multiple requests concurrently without waiting.
+
+---
+
+## TODO
+
+- [ ]  Add MTProto support
+- [ ]  Implement login with User Bot
 
 ---
 
