@@ -175,6 +175,15 @@ class Client
         return $this->request('sendMessage', $extraParams ? array_merge($payload, $extraParams) : $payload);
     }
 
+    public function reply(int $chatId, int $replyToMessageId, string $text, ?array $keyboard = null, ?array $extraParams = null): Future
+{
+    $payload = ['chat_id' => $chatId, 'text' => $text, 'reply_to_message_id' => $replyToMessageId];
+    if ($keyboard !== null) $payload['reply_markup'] = json_encode($keyboard);
+    return $this->request('sendMessage', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+
+
     /**
      * Send photo
      * Supports both Media object or URL/file_id string
