@@ -47,7 +47,7 @@ class Client
      */
     public function __call($method, $arguments): Future
     {
-        return $this->request($method, $arguments[0] ?? null);
+        return $this->request($method, $arguments[0] ?? []);
     }
 
     /**
