@@ -45,7 +45,8 @@ class KeyboardBuilder
      */
     public function row(string ...$buttons): self
     {
-        if ($this->isInline) throw new \RuntimeException("Use inlineRow() for inline keyboard");
+        if ($this->isInline)
+            throw new \RuntimeException("Use inlineRow() for inline keyboard");
         $this->rows[] = array_map(fn($text) => ['text' => $text], $buttons);
         return $this;
     }
@@ -64,6 +65,23 @@ class KeyboardBuilder
         $this->isInline = true;
         return $this;
     }
+
+
+    /**
+     * Add a row to an inline keyboard with URL buttons
+     * @param array $buttons Array of 'ButtonText' => 'URL'
+     */
+    public function inlineUrlRow(array $buttons): self
+    {
+        $row = [];
+        foreach ($buttons as $text => $url) {
+            $row[] = ['text' => $text, 'url' => $url];
+        }
+        $this->inlineRows[] = $row;
+        $this->isInline = true;
+        return $this;
+    }
+
 
     /**
      * Convert keyboard to inline mode
