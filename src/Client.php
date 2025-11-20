@@ -151,7 +151,8 @@ class Client
 
             foreach ($files as $key => $filePath) {
                 $realPath = realpath($filePath);
-                if (!$realPath) throw new \RuntimeException("File not found: $filePath");
+                if (!$realPath)
+                    throw new \RuntimeException("File not found: $filePath");
                 $form->addFile($key, $realPath);
             }
 
@@ -164,23 +165,36 @@ class Client
         });
     }
 
+
+    /**
+     * Get bot info (getMe)
+     */
+    public function getMe(): Future
+    {
+        return $this->request('getMe', []);
+    }
+
+
+
     /**
      * Send text message
      */
     public function sendMessage(int $chatId, string $text, ?array $keyboard = null, ?array $extraParams = null): Future
     {
         $payload = ['chat_id' => $chatId, 'text' => $text];
-        if ($keyboard !== null) $payload['reply_markup'] = json_encode($keyboard);
+        if ($keyboard !== null)
+            $payload['reply_markup'] = json_encode($keyboard);
 
         return $this->request('sendMessage', $extraParams ? array_merge($payload, $extraParams) : $payload);
     }
 
     public function reply(int $chatId, int $replyToMessageId, string $text, ?array $keyboard = null, ?array $extraParams = null): Future
-{
-    $payload = ['chat_id' => $chatId, 'text' => $text, 'reply_to_message_id' => $replyToMessageId];
-    if ($keyboard !== null) $payload['reply_markup'] = json_encode($keyboard);
-    return $this->request('sendMessage', $extraParams ? array_merge($payload, $extraParams) : $payload);
-}
+    {
+        $payload = ['chat_id' => $chatId, 'text' => $text, 'reply_to_message_id' => $replyToMessageId];
+        if ($keyboard !== null)
+            $payload['reply_markup'] = json_encode($keyboard);
+        return $this->request('sendMessage', $extraParams ? array_merge($payload, $extraParams) : $payload);
+    }
 
 
 
@@ -191,11 +205,15 @@ class Client
     public function sendPhoto(int $chatId, string|Media $photo, ?string $caption = null, ?array $keyboard = null, ?array $extraParams = null): Future
     {
         $fields = ['chat_id' => $chatId];
-        if ($caption !== null) $fields['caption'] = $caption;
-        if ($keyboard !== null) $fields['reply_markup'] = json_encode($keyboard);
-        if ($extraParams !== null) $fields = array_merge($fields, $extraParams);
+        if ($caption !== null)
+            $fields['caption'] = $caption;
+        if ($keyboard !== null)
+            $fields['reply_markup'] = json_encode($keyboard);
+        if ($extraParams !== null)
+            $fields = array_merge($fields, $extraParams);
 
-        if ($photo instanceof Media) return $this->requestWithFile('sendPhoto', $fields, ['photo' => $photo->filePath]);
+        if ($photo instanceof Media)
+            return $this->requestWithFile('sendPhoto', $fields, ['photo' => $photo->filePath]);
 
         $fields['photo'] = $photo;
         return $this->request('sendPhoto', $fields);
@@ -208,11 +226,15 @@ class Client
     public function sendVideo(int $chatId, string|Media $video, ?string $caption = null, ?array $keyboard = null, ?array $extraParams = null): Future
     {
         $fields = ['chat_id' => $chatId];
-        if ($caption !== null) $fields['caption'] = $caption;
-        if ($keyboard !== null) $fields['reply_markup'] = json_encode($keyboard);
-        if ($extraParams !== null) $fields = array_merge($fields, $extraParams);
+        if ($caption !== null)
+            $fields['caption'] = $caption;
+        if ($keyboard !== null)
+            $fields['reply_markup'] = json_encode($keyboard);
+        if ($extraParams !== null)
+            $fields = array_merge($fields, $extraParams);
 
-        if ($video instanceof Media) return $this->requestWithFile('sendVideo', $fields, ['video' => $video->filePath]);
+        if ($video instanceof Media)
+            return $this->requestWithFile('sendVideo', $fields, ['video' => $video->filePath]);
 
         $fields['video'] = $video;
         return $this->request('sendVideo', $fields);
@@ -224,11 +246,15 @@ class Client
     public function sendAudio(int $chatId, string|Media $audio, ?string $caption = null, ?array $keyboard = null, ?array $extraParams = null): Future
     {
         $fields = ['chat_id' => $chatId];
-        if ($caption !== null) $fields['caption'] = $caption;
-        if ($keyboard !== null) $fields['reply_markup'] = json_encode($keyboard);
-        if ($extraParams !== null) $fields = array_merge($fields, $extraParams);
+        if ($caption !== null)
+            $fields['caption'] = $caption;
+        if ($keyboard !== null)
+            $fields['reply_markup'] = json_encode($keyboard);
+        if ($extraParams !== null)
+            $fields = array_merge($fields, $extraParams);
 
-        if ($audio instanceof Media) return $this->requestWithFile('sendAudio', $fields, ['audio' => $audio->filePath]);
+        if ($audio instanceof Media)
+            return $this->requestWithFile('sendAudio', $fields, ['audio' => $audio->filePath]);
 
         $fields['audio'] = $audio;
         return $this->request('sendAudio', $fields);
@@ -240,11 +266,15 @@ class Client
     public function sendDocument(int $chatId, string|Media $document, ?string $caption = null, ?array $keyboard = null, ?array $extraParams = null): Future
     {
         $fields = ['chat_id' => $chatId];
-        if ($caption !== null) $fields['caption'] = $caption;
-        if ($keyboard !== null) $fields['reply_markup'] = json_encode($keyboard);
-        if ($extraParams !== null) $fields = array_merge($fields, $extraParams);
+        if ($caption !== null)
+            $fields['caption'] = $caption;
+        if ($keyboard !== null)
+            $fields['reply_markup'] = json_encode($keyboard);
+        if ($extraParams !== null)
+            $fields = array_merge($fields, $extraParams);
 
-        if ($document instanceof Media) return $this->requestWithFile('sendDocument', $fields, ['document' => $document->filePath]);
+        if ($document instanceof Media)
+            return $this->requestWithFile('sendDocument', $fields, ['document' => $document->filePath]);
 
         $fields['document'] = $document;
         return $this->request('sendDocument', $fields);
@@ -256,11 +286,15 @@ class Client
     public function sendAnimation(int $chatId, string|Media $animation, ?string $caption = null, ?array $keyboard = null, ?array $extraParams = null): Future
     {
         $fields = ['chat_id' => $chatId];
-        if ($caption !== null) $fields['caption'] = $caption;
-        if ($keyboard !== null) $fields['reply_markup'] = json_encode($keyboard);
-        if ($extraParams !== null) $fields = array_merge($fields, $extraParams);
+        if ($caption !== null)
+            $fields['caption'] = $caption;
+        if ($keyboard !== null)
+            $fields['reply_markup'] = json_encode($keyboard);
+        if ($extraParams !== null)
+            $fields = array_merge($fields, $extraParams);
 
-        if ($animation instanceof Media) return $this->requestWithFile('sendAnimation', $fields, ['animation' => $animation->filePath]);
+        if ($animation instanceof Media)
+            return $this->requestWithFile('sendAnimation', $fields, ['animation' => $animation->filePath]);
 
         $fields['animation'] = $animation;
         return $this->request('sendAnimation', $fields);
@@ -280,7 +314,8 @@ class Client
     public function editMessageText(int $chatId, int $messageId, string $text, ?array $keyboard = null, ?array $extraParams = null): Future
     {
         $payload = ['chat_id' => $chatId, 'message_id' => $messageId, 'text' => $text];
-        if ($keyboard !== null) $payload['reply_markup'] = json_encode($keyboard);
+        if ($keyboard !== null)
+            $payload['reply_markup'] = json_encode($keyboard);
         return $this->request('editMessageText', $extraParams ? array_merge($payload, $extraParams) : $payload);
     }
 
@@ -307,8 +342,10 @@ class Client
     public function answerCallbackQuery(string $callbackQueryId, ?string $text = null, ?bool $showAlert = false, ?array $extraParams = null): Future
     {
         $payload = ['callback_query_id' => $callbackQueryId];
-        if ($text !== null) $payload['text'] = $text;
-        if ($showAlert !== null) $payload['show_alert'] = $showAlert;
+        if ($text !== null)
+            $payload['text'] = $text;
+        if ($showAlert !== null)
+            $payload['show_alert'] = $showAlert;
         return $this->request('answerCallbackQuery', $extraParams ? array_merge($payload, $extraParams) : $payload);
     }
 
@@ -398,7 +435,8 @@ class Client
     public function sendDice(int $chatId, ?string $emoji = null, ?array $extraParams = null): Future
     {
         $payload = ['chat_id' => $chatId];
-        if ($emoji !== null) $payload['emoji'] = $emoji;
+        if ($emoji !== null)
+            $payload['emoji'] = $emoji;
         return $this->request('sendDice', $payload + ($extraParams ?? []));
     }
 
@@ -444,7 +482,8 @@ class Client
     public function sendContact(int $chatId, string $phoneNumber, string $firstName, ?string $lastName = null, ?array $extraParams = null): Future
     {
         $payload = ['chat_id' => $chatId, 'phone_number' => $phoneNumber, 'first_name' => $firstName];
-        if ($lastName !== null) $payload['last_name'] = $lastName;
+        if ($lastName !== null)
+            $payload['last_name'] = $lastName;
         return $this->request('sendContact', $payload + ($extraParams ?? []));
     }
 
@@ -470,7 +509,8 @@ class Client
     public function createNewStickerSet(int $userId, string $name, string $title, string $emojis, Media $pngSticker, ?array $extraParams = null): Future
     {
         $fields = ['user_id' => $userId, 'name' => $name, 'title' => $title, 'emojis' => $emojis];
-        if ($extraParams !== null) $fields = array_merge($fields, $extraParams);
+        if ($extraParams !== null)
+            $fields = array_merge($fields, $extraParams);
         return $this->requestWithFile('createNewStickerSet', $fields, ['png_sticker' => $pngSticker->filePath]);
     }
 
@@ -480,7 +520,8 @@ class Client
     public function addStickerToSet(int $userId, string $name, string $emojis, Media $pngSticker, ?array $extraParams = null): Future
     {
         $fields = ['user_id' => $userId, 'name' => $name, 'emojis' => $emojis];
-        if ($extraParams !== null) $fields = array_merge($fields, $extraParams);
+        if ($extraParams !== null)
+            $fields = array_merge($fields, $extraParams);
         return $this->requestWithFile('addStickerToSet', $fields, ['png_sticker' => $pngSticker->filePath]);
     }
 
@@ -522,8 +563,10 @@ class Client
     public function getUserProfilePhotos(int $userId, ?int $offset = null, ?int $limit = null): Future
     {
         $payload = ['user_id' => $userId];
-        if ($offset !== null) $payload['offset'] = $offset;
-        if ($limit !== null) $payload['limit'] = $limit;
+        if ($offset !== null)
+            $payload['offset'] = $offset;
+        if ($limit !== null)
+            $payload['limit'] = $limit;
         return $this->request('getUserProfilePhotos', $payload);
     }
 
@@ -533,7 +576,8 @@ class Client
     public function kickChatMember(int $chatId, int $userId, ?int $untilDate = null, ?array $extraParams = null): Future
     {
         $payload = ['chat_id' => $chatId, 'user_id' => $userId];
-        if ($untilDate !== null) $payload['until_date'] = $untilDate;
+        if ($untilDate !== null)
+            $payload['until_date'] = $untilDate;
         return $this->request('kickChatMember', $payload + ($extraParams ?? []));
     }
 
@@ -552,7 +596,8 @@ class Client
     public function restrictChatMember(int $chatId, int $userId, array $permissions, ?int $untilDate = null, ?array $extraParams = null): Future
     {
         $payload = ['chat_id' => $chatId, 'user_id' => $userId, 'permissions' => json_encode($permissions)];
-        if ($untilDate !== null) $payload['until_date'] = $untilDate;
+        if ($untilDate !== null)
+            $payload['until_date'] = $untilDate;
         return $this->request('restrictChatMember', $payload + ($extraParams ?? []));
     }
 
@@ -614,8 +659,10 @@ class Client
     public function answerInlineQuery(string $inlineQueryId, array $results, ?bool $cacheTime = null, ?bool $isPersonal = null, ?array $extraParams = null): Future
     {
         $payload = ['inline_query_id' => $inlineQueryId, 'results' => json_encode($results)];
-        if ($cacheTime !== null) $payload['cache_time'] = $cacheTime;
-        if ($isPersonal !== null) $payload['is_personal'] = $isPersonal;
+        if ($cacheTime !== null)
+            $payload['cache_time'] = $cacheTime;
+        if ($isPersonal !== null)
+            $payload['is_personal'] = $isPersonal;
         return $this->request('answerInlineQuery', $payload + ($extraParams ?? []));
     }
 
@@ -634,8 +681,10 @@ class Client
     public function answerShippingQuery(string $shippingQueryId, bool $ok, ?array $shippingOptions = null, ?string $errorMessage = null): Future
     {
         $payload = ['shipping_query_id' => $shippingQueryId, 'ok' => $ok];
-        if ($shippingOptions !== null) $payload['shipping_options'] = json_encode($shippingOptions);
-        if ($errorMessage !== null) $payload['error_message'] = $errorMessage;
+        if ($shippingOptions !== null)
+            $payload['shipping_options'] = json_encode($shippingOptions);
+        if ($errorMessage !== null)
+            $payload['error_message'] = $errorMessage;
         return $this->request('answerShippingQuery', $payload);
     }
 
@@ -645,7 +694,8 @@ class Client
     public function answerPreCheckoutQuery(string $preCheckoutQueryId, bool $ok, ?string $errorMessage = null): Future
     {
         $payload = ['pre_checkout_query_id' => $preCheckoutQueryId, 'ok' => $ok];
-        if ($errorMessage !== null) $payload['error_message'] = $errorMessage;
+        if ($errorMessage !== null)
+            $payload['error_message'] = $errorMessage;
         return $this->request('answerPreCheckoutQuery', $payload);
     }
 
@@ -664,8 +714,10 @@ class Client
     public function setGameScore(int $userId, int $score, int $chatId, int $messageId, ?bool $force = false, ?bool $disableEditMessage = false): Future
     {
         $payload = ['user_id' => $userId, 'score' => $score, 'chat_id' => $chatId, 'message_id' => $messageId];
-        if ($force !== null) $payload['force'] = $force;
-        if ($disableEditMessage !== null) $payload['disable_edit_message'] = $disableEditMessage;
+        if ($force !== null)
+            $payload['force'] = $force;
+        if ($disableEditMessage !== null)
+            $payload['disable_edit_message'] = $disableEditMessage;
         return $this->request('setGameScore', $payload);
     }
 
@@ -692,7 +744,8 @@ class Client
     {
         return async(function () use ($fileId, $destinationPath) {
             $fileInfo = yield $this->getFile($fileId);
-            if (!isset($fileInfo['result']['file_path'])) throw new \RuntimeException("Invalid file_id or file not found");
+            if (!isset($fileInfo['result']['file_path']))
+                throw new \RuntimeException("Invalid file_id or file not found");
             $filePath = $fileInfo['result']['file_path'];
             $url = "https://api.telegram.org/file/bot" . $this->settings->getAccessToken() . "/" . $filePath;
 
@@ -711,10 +764,14 @@ class Client
     public function setWebhook(string $url, ?string $certificate = null, ?int $maxConnections = null, ?array $allowedUpdates = null, ?bool $dropPendingUpdates = null): Future
     {
         $payload = ['url' => $url];
-        if ($certificate !== null) $payload['certificate'] = $certificate;
-        if ($maxConnections !== null) $payload['max_connections'] = $maxConnections;
-        if ($allowedUpdates !== null) $payload['allowed_updates'] = $allowedUpdates;
-        if ($dropPendingUpdates !== null) $payload['drop_pending_updates'] = $dropPendingUpdates;
+        if ($certificate !== null)
+            $payload['certificate'] = $certificate;
+        if ($maxConnections !== null)
+            $payload['max_connections'] = $maxConnections;
+        if ($allowedUpdates !== null)
+            $payload['allowed_updates'] = $allowedUpdates;
+        if ($dropPendingUpdates !== null)
+            $payload['drop_pending_updates'] = $dropPendingUpdates;
         return $this->request('setWebhook', $payload);
     }
 
@@ -724,7 +781,8 @@ class Client
     public function deleteWebhook(?bool $dropPendingUpdates = null): Future
     {
         $payload = [];
-        if ($dropPendingUpdates !== null) $payload['drop_pending_updates'] = $dropPendingUpdates;
+        if ($dropPendingUpdates !== null)
+            $payload['drop_pending_updates'] = $dropPendingUpdates;
         return $this->request('deleteWebhook', $payload);
     }
 
