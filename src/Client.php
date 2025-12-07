@@ -121,16 +121,28 @@ class Client
      */
     private function request(string $method, array $params = []): Future
     {
+
         $url = $this->settings->getApiUrl() . $this->settings->getAccessToken() . '/' . $method;
 
         return async(function () use ($url, $params) {
-            $request = new Request($url, 'POST');
-            $request->setHeader('Content-Type', 'application/json');
-            $request->setBody(json_encode($params));
+            try {
+                $request = new Request($url, 'POST');
+                $request->setHeader('Content-Type', 'application/json');
+                $request->setBody(json_encode($params));
 
-            $response = $this->httpClient->request($request);
-            $body = $response->getBody()->buffer();
-            return json_decode($body, true);
+                $response = $this->httpClient->request($request);
+                $body = $response->getBody()->buffer();
+                return json_decode($body, true);
+            } catch (\Throwable $e) {
+                $this->settings->getLogger()->error(
+                    "HTTP request failed | " .
+                    "Message: " . $e->getMessage() .
+                    " | File: " . $e->getFile() .
+                    " | Line: " . $e->getLine() .
+                    " | Trace: " . $e->getTraceAsString()
+                );
+                throw $e;
+            }
         });
     }
 
@@ -143,25 +155,36 @@ class Client
         $url = $this->settings->getApiUrl() . $this->settings->getAccessToken() . '/' . $method;
 
         return async(function () use ($url, $fields, $files) {
-            $form = new Form();
+            try {
+                $form = new Form();
 
-            foreach ($fields as $key => $value) {
-                $form->addField($key, (string) $value);
+                foreach ($fields as $key => $value) {
+                    $form->addField($key, (string) $value);
+                }
+
+                foreach ($files as $key => $filePath) {
+                    $realPath = realpath($filePath);
+                    if (!$realPath)
+                        throw new \RuntimeException("File not found: $filePath");
+                    $form->addFile($key, $realPath);
+                }
+
+                $request = new Request($url, 'POST');
+                $request->setBody($form);
+
+                $response = $this->httpClient->request($request);
+                $body = $response->getBody()->buffer();
+                return json_decode($body, true);
+            } catch (\Throwable $e) {
+                $this->settings->getLogger()->error(
+                    "HTTP request failed | " .
+                    "Message: " . $e->getMessage() .
+                    " | File: " . $e->getFile() .
+                    " | Line: " . $e->getLine() .
+                    " | Trace: " . $e->getTraceAsString()
+                );
+                throw $e;
             }
-
-            foreach ($files as $key => $filePath) {
-                $realPath = realpath($filePath);
-                if (!$realPath)
-                    throw new \RuntimeException("File not found: $filePath");
-                $form->addFile($key, $realPath);
-            }
-
-            $request = new Request($url, 'POST');
-            $request->setBody($form);
-
-            $response = $this->httpClient->request($request);
-            $body = $response->getBody()->buffer();
-            return json_decode($body, true);
         });
     }
 
