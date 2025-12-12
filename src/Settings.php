@@ -53,7 +53,7 @@ class Settings
     /**
      * Timeout for poller getUpdates requests
      */
-    private int $pollerTimeout = 5;
+    private int $pollerTimeout = 3;
 
     /**
      * Base seconds for exponential backoff in poller
@@ -201,5 +201,5 @@ class Settings
     /**
      * Get poller request timeout
      */
-    public function getPollerTimeout(): int { return $this->pollerTimeout ?? 30; }
+    public function getPollerTimeout(): int { return $this->pollerTimeout; }
 }
