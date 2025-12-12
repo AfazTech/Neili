@@ -816,4 +816,957 @@ class Client
     {
         return $this->request('getWebhookInfo');
     }
+
+    /**
+ * Copy messages of any kind.
+ * Service messages and invoice messages can't be copied.
+ */
+public function copyMessage(
+    int $chatId,
+    int $fromChatId,
+    int $messageId,
+    ?string $caption = null,
+    ?array $keyboard = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'from_chat_id' => $fromChatId,
+        'message_id' => $messageId
+    ];
+    
+    if ($caption !== null) {
+        $payload['caption'] = $caption;
+    }
+    
+    if ($keyboard !== null) {
+        $payload['reply_markup'] = json_encode($keyboard);
+    }
+    
+    return $this->request('copyMessage', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Send voice messages.
+ */
+public function sendVoice(
+    int $chatId,
+    string|Media $voice,
+    ?string $caption = null,
+    ?array $keyboard = null,
+    ?array $extraParams = null
+): Future
+{
+    $fields = ['chat_id' => $chatId];
+    
+    if ($caption !== null) {
+        $fields['caption'] = $caption;
+    }
+    
+    if ($keyboard !== null) {
+        $fields['reply_markup'] = json_encode($keyboard);
+    }
+    
+    if ($extraParams !== null) {
+        $fields = array_merge($fields, $extraParams);
+    }
+
+    if ($voice instanceof Media) {
+        return $this->requestWithFile('sendVoice', $fields, ['voice' => $voice->filePath]);
+    }
+
+    $fields['voice'] = $voice;
+    return $this->request('sendVoice', $fields);
+}
+
+/**
+ * Send video notes (round videos).
+ */
+public function sendVideoNote(
+    int $chatId,
+    string|Media $videoNote,
+    ?array $keyboard = null,
+    ?array $extraParams = null
+): Future
+{
+    $fields = ['chat_id' => $chatId];
+    
+    if ($keyboard !== null) {
+        $fields['reply_markup'] = json_encode($keyboard);
+    }
+    
+    if ($extraParams !== null) {
+        $fields = array_merge($fields, $extraParams);
+    }
+
+    if ($videoNote instanceof Media) {
+        return $this->requestWithFile('sendVideoNote', $fields, ['video_note' => $videoNote->filePath]);
+    }
+
+    $fields['video_note'] = $videoNote;
+    return $this->request('sendVideoNote', $fields);
+}
+
+/**
+ * Send a group of photos, videos, documents or audios as an album.
+ */
+public function sendMediaGroup(
+    int $chatId,
+    array $media,
+    ?bool $disableNotification = null,
+    ?int $replyToMessageId = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'media' => json_encode($media)
+    ];
+    
+    if ($disableNotification !== null) {
+        $payload['disable_notification'] = $disableNotification;
+    }
+    
+    if ($replyToMessageId !== null) {
+        $payload['reply_to_message_id'] = $replyToMessageId;
+    }
+    
+    return $this->request('sendMediaGroup', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Edit the caption of a message.
+ */
+public function editMessageCaption(
+    int $chatId,
+    int $messageId,
+    ?string $caption = null,
+    ?array $keyboard = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'message_id' => $messageId
+    ];
+    
+    if ($caption !== null) {
+        $payload['caption'] = $caption;
+    }
+    
+    if ($keyboard !== null) {
+        $payload['reply_markup'] = json_encode($keyboard);
+    }
+    
+    return $this->request('editMessageCaption', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Edit only the reply markup of a message.
+ */
+public function editMessageReplyMarkup(
+    int $chatId,
+    int $messageId,
+    ?array $keyboard = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'message_id' => $messageId
+    ];
+    
+    if ($keyboard !== null) {
+        $payload['reply_markup'] = json_encode($keyboard);
+    }
+    
+    return $this->request('editMessageReplyMarkup', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Stop updating a live location message before live_period expires.
+ */
+public function stopMessageLiveLocation(
+    int $chatId,
+    int $messageId,
+    ?array $keyboard = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'message_id' => $messageId
+    ];
+    
+    if ($keyboard !== null) {
+        $payload['reply_markup'] = json_encode($keyboard);
+    }
+    
+    return $this->request('stopMessageLiveLocation', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Unpin all pinned messages in a chat.
+ */
+public function unpinAllChatMessages(int $chatId): Future
+{
+    return $this->request('unpinAllChatMessages', ['chat_id' => $chatId]);
+}
+
+
+/**
+ * Leave a chat.
+ */
+public function leaveChat(int $chatId): Future
+{
+    return $this->request('leaveChat', ['chat_id' => $chatId]);
+}
+
+/**
+ * Get the number of members in a chat.
+ */
+public function getChatMemberCount(int $chatId): Future
+{
+    return $this->request('getChatMemberCount', ['chat_id' => $chatId]);
+}
+
+/**
+ * Approve a chat join request.
+ */
+public function approveChatJoinRequest(int $chatId, int $userId): Future
+{
+    return $this->request('approveChatJoinRequest', [
+        'chat_id' => $chatId,
+        'user_id' => $userId
+    ]);
+}
+
+/**
+ * Decline a chat join request.
+ */
+public function declineChatJoinRequest(int $chatId, int $userId): Future
+{
+    return $this->request('declineChatJoinRequest', [
+        'chat_id' => $chatId,
+        'user_id' => $userId
+    ]);
+}
+
+/**
+ * Set custom emoji sticker set thumbnail for a chat.
+ */
+public function setChatStickerSet(int $chatId, string $stickerSetName): Future
+{
+    return $this->request('setChatStickerSet', [
+        'chat_id' => $chatId,
+        'sticker_set_name' => $stickerSetName
+    ]);
+}
+
+/**
+ * Delete custom emoji sticker set from a chat.
+ */
+public function deleteChatStickerSet(int $chatId): Future
+{
+    return $this->request('deleteChatStickerSet', ['chat_id' => $chatId]);
+}
+
+/**
+ * Create a topic in a forum supergroup chat.
+ */
+public function createForumTopic(
+    int $chatId,
+    string $name,
+    ?int $iconColor = null,
+    ?string $iconCustomEmojiId = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'name' => $name
+    ];
+    
+    if ($iconColor !== null) {
+        $payload['icon_color'] = $iconColor;
+    }
+    
+    if ($iconCustomEmojiId !== null) {
+        $payload['icon_custom_emoji_id'] = $iconCustomEmojiId;
+    }
+    
+    return $this->request('createForumTopic', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Edit name and icon of a topic in a forum supergroup chat.
+ */
+public function editForumTopic(
+    int $chatId,
+    int $messageThreadId,
+    ?string $name = null,
+    ?string $iconCustomEmojiId = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'message_thread_id' => $messageThreadId
+    ];
+    
+    if ($name !== null) {
+        $payload['name'] = $name;
+    }
+    
+    if ($iconCustomEmojiId !== null) {
+        $payload['icon_custom_emoji_id'] = $iconCustomEmojiId;
+    }
+    
+    return $this->request('editForumTopic', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Close an open topic in a forum supergroup chat.
+ */
+public function closeForumTopic(int $chatId, int $messageThreadId): Future
+{
+    return $this->request('closeForumTopic', [
+        'chat_id' => $chatId,
+        'message_thread_id' => $messageThreadId
+    ]);
+}
+
+/**
+ * Reopen a closed topic in a forum supergroup chat.
+ */
+public function reopenForumTopic(int $chatId, int $messageThreadId): Future
+{
+    return $this->request('reopenForumTopic', [
+        'chat_id' => $chatId,
+        'message_thread_id' => $messageThreadId
+    ]);
+}
+
+/**
+ * Delete a forum topic along with all its messages in a forum supergroup chat.
+ */
+public function deleteForumTopic(int $chatId, int $messageThreadId): Future
+{
+    return $this->request('deleteForumTopic', [
+        'chat_id' => $chatId,
+        'message_thread_id' => $messageThreadId
+    ]);
+}
+
+/**
+ * Clear the list of pinned messages in a forum topic.
+ */
+public function unpinAllForumTopicMessages(int $chatId, int $messageThreadId): Future
+{
+    return $this->request('unpinAllForumTopicMessages', [
+        'chat_id' => $chatId,
+        'message_thread_id' => $messageThreadId
+    ]);
+}
+
+/**
+ * Get custom emoji stickers, which can be used as a forum topic icon by any user.
+ */
+public function getForumTopicIconStickers(): Future
+{
+    return $this->request('getForumTopicIconStickers', []);
+}
+
+/**
+ * Edit the name of the 'General' topic in a forum supergroup chat.
+ */
+public function editGeneralForumTopic(int $chatId, string $name): Future
+{
+    return $this->request('editGeneralForumTopic', [
+        'chat_id' => $chatId,
+        'name' => $name
+    ]);
+}
+
+/**
+ * Close an open 'General' topic in a forum supergroup chat.
+ */
+public function closeGeneralForumTopic(int $chatId): Future
+{
+    return $this->request('closeGeneralForumTopic', ['chat_id' => $chatId]);
+}
+
+/**
+ * Reopen a closed 'General' topic in a forum supergroup chat.
+ */
+public function reopenGeneralForumTopic(int $chatId): Future
+{
+    return $this->request('reopenGeneralForumTopic', ['chat_id' => $chatId]);
+}
+
+/**
+ * Hide the 'General' topic in a forum supergroup chat.
+ */
+public function hideGeneralForumTopic(int $chatId): Future
+{
+    return $this->request('hideGeneralForumTopic', ['chat_id' => $chatId]);
+}
+
+/**
+ * Unhide the 'General' topic in a forum supergroup chat.
+ */
+public function unhideGeneralForumTopic(int $chatId): Future
+{
+    return $this->request('unhideGeneralForumTopic', ['chat_id' => $chatId]);
+}
+
+/**
+ * Change the bot's description.
+ */
+public function setMyDescription(
+    ?string $description = null,
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($description !== null) {
+        $payload['description'] = $description;
+    }
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('setMyDescription', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Change the bot's name.
+ */
+public function setMyName(
+    ?string $name = null,
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($name !== null) {
+        $payload['name'] = $name;
+    }
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('setMyName', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Change the bot's short description.
+ */
+public function setMyShortDescription(
+    ?string $shortDescription = null,
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($shortDescription !== null) {
+        $payload['short_description'] = $shortDescription;
+    }
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('setMyShortDescription', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Get the current bot description.
+ */
+public function getMyDescription(
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('getMyDescription', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Get the current bot name.
+ */
+public function getMyName(
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('getMyName', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Get the current bot short description.
+ */
+public function getMyShortDescription(
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('getMyShortDescription', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Change the list of the bot's commands.
+ */
+public function setMyCommands(
+    array $commands,
+    ?array $scope = null,
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'commands' => json_encode($commands)
+    ];
+    
+    if ($scope !== null) {
+        $payload['scope'] = json_encode($scope);
+    }
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('setMyCommands', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Delete the list of the bot's commands.
+ */
+public function deleteMyCommands(
+    ?array $scope = null,
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($scope !== null) {
+        $payload['scope'] = json_encode($scope);
+    }
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('deleteMyCommands', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Get the current list of the bot's commands.
+ */
+public function getMyCommands(
+    ?array $scope = null,
+    ?string $languageCode = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($scope !== null) {
+        $payload['scope'] = json_encode($scope);
+    }
+    
+    if ($languageCode !== null) {
+        $payload['language_code'] = $languageCode;
+    }
+    
+    return $this->request('getMyCommands', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Change the bot's menu button.
+ */
+public function setChatMenuButton(
+    ?int $chatId = null,
+    ?array $menuButton = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($chatId !== null) {
+        $payload['chat_id'] = $chatId;
+    }
+    
+    if ($menuButton !== null) {
+        $payload['menu_button'] = json_encode($menuButton);
+    }
+    
+    return $this->request('setChatMenuButton', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Get the current value of the bot's menu button.
+ */
+public function getChatMenuButton(
+    ?int $chatId = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($chatId !== null) {
+        $payload['chat_id'] = $chatId;
+    }
+    
+    return $this->request('getChatMenuButton', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Change the default administrator rights requested by the bot.
+ */
+public function setMyDefaultAdministratorRights(
+    ?array $rights = null,
+    ?bool $forChannels = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($rights !== null) {
+        $payload['rights'] = json_encode($rights);
+    }
+    
+    if ($forChannels !== null) {
+        $payload['for_channels'] = $forChannels;
+    }
+    
+    return $this->request('setMyDefaultAdministratorRights', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Get the current default administrator rights of the bot.
+ */
+public function getMyDefaultAdministratorRights(
+    ?bool $forChannels = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($forChannels !== null) {
+        $payload['for_channels'] = $forChannels;
+    }
+    
+    return $this->request('getMyDefaultAdministratorRights', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Change the bot's profile photo.
+ */
+public function setMyProfilePhoto(Media $photo): Future
+{
+    return $this->requestWithFile('setMyProfilePhoto', [], ['photo' => $photo->filePath]);
+}
+
+/**
+ * Delete the bot's profile photo.
+ */
+public function deleteMyProfilePhoto(?string $photoId = null): Future
+{
+    $payload = [];
+    
+    if ($photoId !== null) {
+        $payload['photo_id'] = $photoId;
+    }
+    
+    return $this->request('deleteMyProfilePhoto', $payload);
+}
+
+/**
+ * Get the current list of the bot's profile photos.
+ */
+public function getMyProfilePhotos(): Future
+{
+    return $this->request('getMyProfilePhotos', []);
+}
+
+/**
+ * Set a custom title for an administrator in a supergroup.
+ */
+public function setChatAdministratorCustomTitle(
+    int $chatId,
+    int $userId,
+    string $customTitle
+): Future
+{
+    return $this->request('setChatAdministratorCustomTitle', [
+        'chat_id' => $chatId,
+        'user_id' => $userId,
+        'custom_title' => $customTitle
+    ]);
+}
+
+/**
+ * Ban a channel chat in a supergroup or a channel.
+ */
+public function banChatSenderChat(
+    int $chatId,
+    int $senderChatId,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'sender_chat_id' => $senderChatId
+    ];
+    
+    return $this->request('banChatSenderChat', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Unban a previously banned channel chat in a supergroup or a channel.
+ */
+public function unbanChatSenderChat(
+    int $chatId,
+    int $senderChatId,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'chat_id' => $chatId,
+        'sender_chat_id' => $senderChatId
+    ];
+    
+    return $this->request('unbanChatSenderChat', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Get the list of banned users in a supergroup or channel.
+ */
+public function getChatBannedUsers(int $chatId): Future
+{
+    return $this->request('getChatBannedUsers', ['chat_id' => $chatId]);
+}
+
+
+
+/**
+ * Delete a chat photo.
+ */
+public function deleteChatPhoto(int $chatId): Future
+{
+    return $this->request('deleteChatPhoto', ['chat_id' => $chatId]);
+}
+
+
+
+/**
+ * Get custom emoji stickers.
+ */
+public function getCustomEmojiStickers(array $customEmojiIds): Future
+{
+    return $this->request('getCustomEmojiStickers', [
+        'custom_emoji_ids' => json_encode($customEmojiIds)
+    ]);
+}
+
+/**
+ * Set the thumbnail of a regular or mask sticker set.
+ */
+public function setStickerSetThumbnail(
+    string $name,
+    int $userId,
+    ?Media $thumbnail = null,
+    ?string $format = null,
+    ?array $extraParams = null
+): Future
+{
+    $fields = [
+        'name' => $name,
+        'user_id' => $userId
+    ];
+    
+    if ($format !== null) {
+        $fields['format'] = $format;
+    }
+    
+    if ($extraParams !== null) {
+        $fields = array_merge($fields, $extraParams);
+    }
+
+    if ($thumbnail instanceof Media) {
+        return $this->requestWithFile('setStickerSetThumbnail', $fields, ['thumbnail' => $thumbnail->filePath]);
+    }
+
+    return $this->request('setStickerSetThumbnail', $fields);
+}
+
+/**
+ * Set the title of a created sticker set.
+ */
+public function setStickerSetTitle(string $name, string $title): Future
+{
+    return $this->request('setStickerSetTitle', [
+        'name' => $name,
+        'title' => $title
+    ]);
+}
+
+/**
+ * Delete a sticker set.
+ */
+public function deleteStickerSet(string $name): Future
+{
+    return $this->request('deleteStickerSet', ['name' => $name]);
+}
+
+/**
+ * Set the thumbnail of a custom emoji sticker set.
+ */
+public function setCustomEmojiStickerSetThumbnail(
+    string $name,
+    ?string $customEmojiId = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = ['name' => $name];
+    
+    if ($customEmojiId !== null) {
+        $payload['custom_emoji_id'] = $customEmojiId;
+    }
+    
+    return $this->request('setCustomEmojiStickerSetThumbnail', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+
+
+
+/**
+ * Set the emoji list of a sticker.
+ */
+public function setStickerEmojiList(string $stickerId, array $emojiList): Future
+{
+    return $this->request('setStickerEmojiList', [
+        'sticker' => $stickerId,
+        'emoji_list' => json_encode($emojiList)
+    ]);
+}
+
+/**
+ * Set the keywords of a sticker.
+ */
+public function setStickerKeywords(string $stickerId, array $keywords): Future
+{
+    return $this->request('setStickerKeywords', [
+        'sticker' => $stickerId,
+        'keywords' => json_encode($keywords)
+    ]);
+}
+
+/**
+ * Set the mask position of a mask sticker.
+ */
+public function setStickerMaskPosition(string $stickerId, array $maskPosition): Future
+{
+    return $this->request('setStickerMaskPosition', [
+        'sticker' => $stickerId,
+        'mask_position' => json_encode($maskPosition)
+    ]);
+}
+
+
+
+/**
+ * Set the result of an interaction with a Web App.
+ */
+public function answerWebAppQuery(
+    string $webAppQueryId,
+    array $result,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [
+        'web_app_query_id' => $webAppQueryId,
+        'result' => json_encode($result)
+    ];
+    
+    return $this->request('answerWebAppQuery', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+
+
+/**
+ * Get updates.
+ */
+public function getUpdates(
+    ?int $offset = null,
+    ?int $limit = null,
+    ?int $timeout = null,
+    ?array $allowedUpdates = null,
+    ?array $extraParams = null
+): Future
+{
+    $payload = [];
+    
+    if ($offset !== null) {
+        $payload['offset'] = $offset;
+    }
+    
+    if ($limit !== null) {
+        $payload['limit'] = $limit;
+    }
+    
+    if ($timeout !== null) {
+        $payload['timeout'] = $timeout;
+    }
+    
+    if ($allowedUpdates !== null) {
+        $payload['allowed_updates'] = json_encode($allowedUpdates);
+    }
+    
+    return $this->request('getUpdates', $extraParams ? array_merge($payload, $extraParams) : $payload);
+}
+
+/**
+ * Log out from the cloud Bot API server.
+ */
+public function logOut(): Future
+{
+    return $this->request('logOut', []);
+}
+
+/**
+ * Close the bot instance.
+ */
+public function close(): Future
+{
+    return $this->request('close', []);
+}
+
+
 }
