@@ -107,7 +107,7 @@ class Poller
         // Optionally discard old updates to start fresh
         if ($discardOldUpdates) {
             try {
-                $latest = $this->client->getUpdates(['timeout'=>1])->await();
+                $latest = $this->client->getUpdates(null,null,$timeout)->await();
                 $result = $latest['result'] ?? [];
                 if ($result) $this->offset = (int) end($result)['update_id'] + 1;
             } catch (\Throwable $e) {
@@ -120,7 +120,7 @@ class Poller
             $failCount = 0;
             while ($this->running) {
                 try {
-                    $response = $this->client->getUpdates(['offset'=>$this->offset,'timeout'=>$timeout])->await();
+                    $response = $this->client->getUpdates($this->offset,null,$timeout,array_keys($this->handlers))->await();
                     $updates = $response['result'] ?? [];
 
                     foreach ($updates as $update) {
