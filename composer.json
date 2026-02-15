@@ -2,7 +2,7 @@
     "name": "afaztech/neili",
     "description": "Neili is an async-first PHP library built on Amp that streamlines creating robust Telegram bots. It provides a non-blocking HTTP client, wrappers for all Telegram Bot API methods, a long-polling Poller with concurrency control, and a flexible webhook handler. Neili is optimized for both constrained hosting environments and long-running worker processes.",
     "type": "library",
-    "version": "2.2.5",
+    "version": "2.2.6",
     "license": "MIT",
     "keywords": [
         "afaztech",
